@@ -1,0 +1,153 @@
+﻿@using GridMvc.Html
+@using ServiceAnt.DataAccess.Model
+@using ServiceAnt.Web.Models
+@model IEnumerable<FrequentlyUsedServiceVm>
+
+<script type="text/javascript">
+   $(function () {
+      var resetAllValues = function () {
+         $('.modal-body').find('input:text').val('');
+      }
+
+      var showInfo = function (message) {
+         $('#notificationBox').append('<div class="alert alert-info"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+            + message + '</div>');
+      }
+
+      var showError = function (message) {
+         $('#modalNotificationBox').append('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+            + message + '</div>');
+      }
+
+
+      $("#newFusSubmit").click(function() {
+         var self = $(this);
+         self.attr('disabled', true);
+
+         var newFus = {
+            machineName: $("#newHostName").val(),
+            serviceName: $("#newServiceName").val(),
+            serviceAlias: $("#newAlias").val()
+         }
+
+         $.ajax({
+            url: "/api/newfus/",
+            type: "POST",
+            data: JSON.stringify(newFus),
+            xhrFields: {
+               withCredentials: true
+            },
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
+               if(result.Success) {
+                  resetAllValues();
+                  showInfo("Nowy serwis został prawidłowo dodany. Odśwież listę, aby go wyświetlić.");
+                  $('#createFus').modal('hide');
+               }
+               else {
+                  showError(result.Message);
+               }
+               self.removeAttr('disabled');
+            },
+            error: function(msg) {
+               showError('Podczas próby dodania serwisu wystąpił błąd wewnętrzny. ' + msg);
+               self.removeAttr('disabled');
+            }
+         });
+      });
+   });
+</script>
+
+@functions {
+   private string SetColorPerStatus(FrequentlyUsedServiceVm frequentlyUsedServiceVm)
+   {
+      switch (frequentlyUsedServiceVm.Status)
+      {
+         case ServiceStatus.Running:
+            return "success";
+         case ServiceStatus.Stopped:
+            return "danger";
+         case ServiceStatus.ContinuePending:
+            return "warning";
+         case ServiceStatus.PausePending:
+            return "warning";
+         case ServiceStatus.StartPending:
+            return "warning";
+         case ServiceStatus.StopPending:
+            return "warning";
+         default:
+            return string.Empty;
+      }
+   }
+}
+<div class="row">
+   <div class="col-md-10"><h3>Zalogowany jako: @User.Identity.Name</h3>
+   </div>
+
+   <div class="col-md-10">
+      <div id="notificationBox">
+         @if (string.IsNullOrEmpty(ViewBag.StatusChangeInfo) == false)
+         {
+            <div class="alert alert-danger">
+               @ViewBag.StatusChangeInfo
+            </div>
+         }
+      </div>
+
+      <br/>
+      <a href="@Url.Action("Index")" class="btn btn-primary">
+         Odśwież
+         <span class="glyphicon glyphicon-refresh"></span>
+      </a>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createFus">
+         Dodaj serwis
+         <span class="glyphicon glyphicon-plus"></span>
+      </button>
+      <br/>
+
+      @Html.Grid(Model).Columns(columns =>
+      {
+         columns.Add().Encoded(false).Sanitized(false).RenderValueAs(col =>
+            (col.Status == ServiceStatus.Stopped || col.Status == ServiceStatus.Paused
+               ? Html.ActionLink("Start", "Start", new {id = col.Id}, new {@class = "btn btn-primary btn-xs"})
+               : (col.Status == ServiceStatus.Running ? Html.ActionLink("Stop", "Stop", new {id = col.Id}, new {@class = "btn btn-primary btn-xs"}) : MvcHtmlString.Empty)).ToHtmlString());
+         columns.Add(c => c.Id).Titled("Id");
+         columns.Add(c => c.Alias).Titled("Twoja nazwa serwisu");
+         columns.Add(c => c.MachineName).Titled("Nazwa hosta");
+         columns.Add(c => c.DisplayName).Titled("Wyświetlana nazwa serwisu");
+         columns.Add(c => c.Name).Titled("Nazwa serwisu");
+         columns.Add(c => c.Status).Titled("Status");
+      }).Sortable(true).WithPaging(10).SetRowCssClasses(SetColorPerStatus)
+   </div>
+
+   <div class="modal fade" id="createFus" tabindex="-1" role="dialog" aria-labelledby="createFulLabel">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-label="Zamknij"><span aria-hidden="true">&times;</span></button>
+               <h4 class="modal-title" id="createFusLabel">Dodaj serwis</h4>
+            </div>
+            <div class="modal-body">
+               <div class="row" id="modalNotificationBox">
+               </div>
+               <div class="row">
+                  <div class="col-md-4">Nazwa hosta</div>
+                  <input type="text" class="form-control col-md-4" placeholder="host" id="newHostName">
+               </div>
+               <div class="row">
+                  <div class="col-md-4">Nazwa serwisu</div>
+                  <input type="text" class="form-control col-md-4" placeholder="nazwa" id="newServiceName">
+               </div>
+               <div class="row">
+                  <div class="col-md-4">Twoja nazwa serwisu</div>
+                  <input type="text" class="form-control col-md-4" placeholder="alias" id="newAlias">
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+               <button type="button" class="btn btn-primary" id="newFusSubmit">Dodaj</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

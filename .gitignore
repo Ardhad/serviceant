@@ -1,0 +1,10 @@
+ServiceAnt.Web/bin
+ServiceAnt.Web/obj
+ServiceAnt.DataAccess/bin
+ServiceAnt.DataAccess/obj
+ServiceAnt.Logic/bin
+ServiceAnt.Logic/obj
+packages
+*.suo
+*.mdf
+*.ldf

@@ -1,0 +1,16 @@
+Web.config:
+
+1. Okreœlanie inicjalizatora DB i kontekstu w wêŸle entityFramework:
+<contexts>
+    <context type="ServiceAnt.DataAccess.Context.ServiceAntContext, ServiceAnt.DataAccess">
+        <databaseInitializer type="ServiceAnt.DataAccess.Initialize.ServiceAntDbInitializer, ServiceAnt.DataAccess" />
+    </context>
+</contexts>
+
+¯eby wy³¹czyæ inicjalizator, dodaæ do <context> atrybut disableDatabaseInitialization="true".
+Zamiast wpisu w configu mo¿na te¿ dodaæ inicjalizator w Application_Start (ale trzeba przekompilowywaæ).
+
+2. Namiary na DB:
+<connectionStrings>
+    <add name="ServiceAntDb" connectionString="Data Source=(LocalDb)\v11.0;Initial Catalog=ServiceAnt_Dev;Integrated Security=SSPI;AttachDBFilename=|DataDirectory|\ServiceAnt_Dev.mdf" providerName="System.Data.SqlClient"/>
+</connectionStrings>

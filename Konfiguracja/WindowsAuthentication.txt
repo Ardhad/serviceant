@@ -1,0 +1,15 @@
+1. W IIS Uwierzytelnianie -> 
+	a. Anonymous Authentication DISABLED
+	b. Windows Authentication ENABLED
+2. Web.config, sekcja <system.web>:
+	<authentication mode="Windows" />
+    <authorization>
+        <deny users="?"/>
+    </authorization>
+	
+3. http://stackoverflow.com/questions/4762538/iis-express-windows-authentication/7168308#7168308
+F4 na projekcie Web, DISABLED na Anonymous, ENABLED na Windows
+
+4. Dla ApiControllerów - uważać na wpis w WebApiConfig.cs - najlepiej usunąć filtry d/t autentykacji.
+
+	
