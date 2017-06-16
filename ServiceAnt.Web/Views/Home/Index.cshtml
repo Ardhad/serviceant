@@ -116,7 +116,7 @@
          columns.Add(c => c.MachineName).Titled("Nazwa hosta");
          columns.Add(c => c.DisplayName).Titled("Wyświetlana nazwa serwisu");
          columns.Add(c => c.Name).Titled("Nazwa serwisu");
-         columns.Add(c => c.Status).Titled("Status");
+         columns.Add(c => c.Status).Titled("Status").RenderValueAs(c => c.Status.GetDescription());
       }).Sortable(true).WithPaging(10).SetRowCssClasses(SetColorPerStatus)
    </div>
 

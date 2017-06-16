@@ -21,10 +21,10 @@ namespace ServiceAnt.Logic.Service
   
       public ServiceStatus GetStatus()
       {
-         if (_host.Exists() == false || _host.IsRunning() == false)
-         {
-            return ServiceStatus.NotExist;
-         }
+         if (_host.Exists() == false)
+            return ServiceStatus.HostNotExist;
+         if (_host.IsRunning() == false) 
+            return ServiceStatus.HostDown;
 
          var service = _host.GetService(_serviceName);
          if (service == null)
