@@ -41,7 +41,11 @@
             success: function(result) {
                if(result.Success) {
                   resetAllValues();
-                  showInfo("Nowy serwis został prawidłowo dodany. Odśwież listę, aby go wyświetlić.");
+                  showInfo("Nowy serwis został dodany.");
+
+                  var url = "@(Html.Raw(Url.Action("GridPartial", "Home")))";
+                  $('#gridDiv').load(url);
+
                   $('#createFus').modal('hide');
                }
                else {
@@ -58,28 +62,6 @@
    });
 </script>
 
-@functions {
-   private string SetColorPerStatus(FrequentlyUsedServiceVm frequentlyUsedServiceVm)
-   {
-      switch (frequentlyUsedServiceVm.Status)
-      {
-         case ServiceStatus.Running:
-            return "success";
-         case ServiceStatus.Stopped:
-            return "danger";
-         case ServiceStatus.ContinuePending:
-            return "warning";
-         case ServiceStatus.PausePending:
-            return "warning";
-         case ServiceStatus.StartPending:
-            return "warning";
-         case ServiceStatus.StopPending:
-            return "warning";
-         default:
-            return string.Empty;
-      }
-   }
-}
 <div class="row">
    <div class="col-md-10"><h3>Zalogowany jako: @User.Identity.Name</h3>
    </div>
@@ -105,19 +87,10 @@
       </button>
       <br/>
 
-      @Html.Grid(Model).Columns(columns =>
-      {
-         columns.Add().Encoded(false).Sanitized(false).RenderValueAs(col =>
-            (col.Status == ServiceStatus.Stopped || col.Status == ServiceStatus.Paused
-               ? Html.ActionLink("Start", "Start", new {id = col.Id}, new {@class = "btn btn-primary btn-xs"})
-               : (col.Status == ServiceStatus.Running ? Html.ActionLink("Stop", "Stop", new {id = col.Id}, new {@class = "btn btn-primary btn-xs"}) : MvcHtmlString.Empty)).ToHtmlString());
-         columns.Add(c => c.Id).Titled("Id");
-         columns.Add(c => c.Alias).Titled("Twoja nazwa serwisu");
-         columns.Add(c => c.MachineName).Titled("Nazwa hosta");
-         columns.Add(c => c.DisplayName).Titled("Wyświetlana nazwa serwisu");
-         columns.Add(c => c.Name).Titled("Nazwa serwisu");
-         columns.Add(c => c.Status).Titled("Status").RenderValueAs(c => c.Status.GetDescription());
-      }).Sortable(true).WithPaging(10).SetRowCssClasses(SetColorPerStatus)
+      <div id="gridDiv">
+         @Html.Partial("GridPartial", Model)
+      </div>
+      
    </div>
 
    <div class="modal fade" id="createFus" tabindex="-1" role="dialog" aria-labelledby="createFulLabel">

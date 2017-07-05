@@ -40,6 +40,25 @@ namespace ServiceAnt.Web.Controllers
             Status = x.Status
          }));
       }
+      public ActionResult GridPartial()
+      {
+         ViewBag.StatusChangeInfo = TempData.ContainsKey(StatusChangeInfoAlias)
+            ? TempData[StatusChangeInfoAlias]
+            : string.Empty;
+
+         var allServices = _getFusService.GetAll(_identityService.UserName);
+
+         return PartialView("GridPartial", allServices.Select(x => new FrequentlyUsedServiceVm
+         {
+            Id = x.Id,
+            UserName = x.UserName,
+            MachineName = x.MachineName,
+            Name = x.Name,
+            DisplayName = x.DisplayName,
+            Alias = x.Alias,
+            Status = x.Status
+         }));
+      }
 
       public ActionResult Start(int id)
       {
