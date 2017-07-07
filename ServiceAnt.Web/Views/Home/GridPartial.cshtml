@@ -15,7 +15,7 @@
    columns.Add(c => c.DisplayName).Titled("Wyświetlana nazwa serwisu");
    columns.Add(c => c.Name).Titled("Nazwa serwisu");
    columns.Add(c => c.Status).Titled("Status").RenderValueAs(c => c.Status.GetDescription());
-}).Sortable(true).WithPaging(10).SetRowCssClasses(SetColorPerStatus)
+}).Sortable(true).WithPaging(10).SetRowCssClasses(SetColorPerStatus).Selectable(false)
 
 @functions {
    private string SetColorPerStatus(FrequentlyUsedServiceVm frequentlyUsedServiceVm)
