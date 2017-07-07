@@ -78,5 +78,9 @@ namespace ServiceAnt.Logic.ServicesManagement
       {
          return GetServices().FirstOrDefault(serv => serv.ServiceName.Equals(serviceName));
       }
+      public IEnumerable<ServiceController> GetServicesByPrefix(string prefix)
+      {
+         return GetServices().Where(serv => serv.ServiceName.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase));
+      }
    }
 }

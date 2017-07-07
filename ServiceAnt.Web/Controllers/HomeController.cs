@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
 using System.Web.Mvc;
 using ServiceAnt.Logic.Api.Dto;
 using ServiceAnt.Logic.Api.Service;
@@ -10,14 +12,16 @@ namespace ServiceAnt.Web.Controllers
    {
       private const string StatusChangeInfoAlias = "StatusChangeFailure";
       private readonly IGetFusService _getFusService;
+      private readonly IAutocompleteService _autocompleteService;
       private readonly IIdentityService _identityService;
       private readonly IStatusChangeService _statusChangeService;
 
-      public HomeController(IGetFusService getFusService, IIdentityService identityService, IStatusChangeService statusChangeService)
+      public HomeController(IGetFusService getFusService, IIdentityService identityService, IStatusChangeService statusChangeService, IAutocompleteService autocompleteService)
       {
          _getFusService = getFusService;
          _identityService = identityService;
          _statusChangeService = statusChangeService;
+         _autocompleteService = autocompleteService;
       }
 
       public ActionResult Index()
@@ -59,7 +63,7 @@ namespace ServiceAnt.Web.Controllers
             Status = x.Status
          }));
       }
-
+      
       public ActionResult Start(int id)
       {
          var statusChangeInfo = _statusChangeService.Start(id);
@@ -69,6 +73,13 @@ namespace ServiceAnt.Web.Controllers
          }
 
          return RedirectToAction("Index");
+      }
+
+      public JsonResult GetServices(string prefix, string hostName)
+      {
+         var serviceNames = _autocompleteService.GetServiceNames(hostName, prefix);
+
+         return Json(serviceNames.ToList(), JsonRequestBehavior.AllowGet);
       }
 
       public ActionResult Stop(int id)

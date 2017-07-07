@@ -15,3 +15,16 @@ select,
 textarea {
     max-width: 280px;
 }
+
+#newFusPanel {
+   margin-top: 3px;
+   margin-bottom: 3px;
+}
+
+#newFusPanel input + input {
+   margin-left: 2px;
+}
+
+#newFusPanel input + button {
+   margin-left: 2px;
+}

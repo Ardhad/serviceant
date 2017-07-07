@@ -66,6 +66,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\GetFusService.cs" />
     <Compile Include="Api\Service\IGetFusService.cs" />
+    <Compile Include="Service\AutocompleteService.cs" />
+    <Compile Include="Api\Service\IAutocompleteService.cs" />
     <Compile Include="Service\NewFusService.cs" />
     <Compile Include="Service\NewFusValidationService.cs" />
     <Compile Include="Service\ServicesCommonService.cs" />
